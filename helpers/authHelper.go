@@ -58,3 +58,23 @@ func GenerateTokens(email string, username string, usertype string, userid strin
 	return access_token, refresh_token, nil
 
 }
+
+func ValidateToken(incomingToken string) (claims *models.TokenDetails, msg string) {
+	token, err := jwt.ParseWithClaims(incomingToken, &models.TokenDetails{}, func(token *jwt.Token) (interface{}, error) {
+		return []byte(secret_key), nil
+	})
+	if err != nil {
+		return nil, err.Error()
+	}
+	claims, ok := token.Claims.(*models.TokenDetails)
+	if !ok {
+		msg = "token is not valid"
+		return
+	}
+	if claims.ExpiresAt < time.Now().Local().Unix() {
+		msg = "token is expired"
+		return
+	}
+	return claims, msg
+
+}
