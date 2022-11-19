@@ -15,6 +15,7 @@ func main() {
 	router := gin.Default()
 	routes.AuthRoutes(router)
 	routes.UserRoutes(router)
+	routes.DefinitionRoutes(router)
 	router.Run(port)
 
 }
